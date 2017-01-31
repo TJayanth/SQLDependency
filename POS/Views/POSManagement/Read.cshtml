@@ -1,0 +1,59 @@
+﻿@model IEnumerable<POS.Models.POSModel>
+@{
+    ViewBag.Title = "Read";
+}
+<h2 class="text-center">Purchase History Details</h2>
+<div id="title">
+    <h4>@Html.ActionLink("Create New Order", "Create")</h4>
+</div>
+
+@{
+    var grid = new WebGrid(source: Model,
+                           defaultSort: "Name",
+                           rowsPerPage: 10);
+    grid.SortDirection = SortDirection.Ascending;
+}
+<div class="col-md-3">
+</div>
+@*<div class="col-md-8">
+    <div id="grid" class="table ">
+        @grid.GetHtml(
+                tableStyle: "grid",
+                headerStyle: "head",
+                columns: grid.Columns(
+                                  grid.Column("OrderName", "OrderName", style: "Name", format: @<text><a href="~/Employee/Details/@item.id">@item.OrderName</a></text>),
+                                                       grid.Column("Description", format: @<text>@item.Description</text>)
+                                                                              )
+                                                                          )
+    </div>
+
+</div>*@
+<table class="table table-bordered">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.OrderName, "Edit", "POSManagement", new { id = item.Id }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
