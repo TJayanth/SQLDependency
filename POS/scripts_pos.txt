@@ -1,0 +1,86 @@
+CREATE DATABASE POS;
+
+use POS
+CREATE TABLE PurchaseOrder(
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[OrderName] [varchar](100) NOT NULL,
+	[Description] [varchar](100) NOT NULL,
+	[TimeStamp] datetime not null,
+) 
+
+CREATE PROCEDURE [sp_AddPurchaseOrder]
+(
+	@in_OrderName VARCHAR(50),
+	@in_Description VARCHAR(1000)
+)
+AS
+BEGIN
+	INSERT INTO PurchaseOrder
+				(
+				OrderName, [Description], [TimeStamp]
+				)
+	VALUES     
+				(
+				@in_OrderName, @in_Description,GETDATE()
+				)
+
+				select @@IDENTITY
+END
+
+Create Proc sp_ReadPurchaseOrder
+as
+begin
+	select id,ordername,description,timestamp from PurchaseOrder
+end
+
+Create PROCEDURE sp_UpdatePurchaseOrder
+(
+    @in_Id int,
+	@in_OrderName VARCHAR(50),
+	@in_Description VARCHAR(1000)
+)
+AS
+BEGIN
+	UPDATE PurchaseOrder
+			SET OrderName=@in_OrderName,Description=@in_Description
+			where Id=@in_Id
+END
+
+create proc sp_GetPurchaseOrder
+(
+ @in_Id int
+)
+AS
+BEGIN
+	select id,ordername,description,timestamp from PurchaseOrder
+			where Id=@in_Id
+END
+
+
+create proc sp_DeletePurchaseOrder
+(
+ @in_Id int
+)
+AS
+BEGIN
+	delete from PurchaseOrder
+			where Id=@in_Id
+END
+
+create proc sp_RecentPurchaseOrder
+as 
+begin
+select top 5 id,ordername,Description,TimeStamp from purchaseorder order by TimeStamp desc
+end
+
+
+alter Database POS set Enable_Broker with rollback immediate;
+
+create proc sp_Notification
+(
+ @in_Timestamp Datetime
+)
+AS
+begin
+select id,ordername,Description,TimeStamp from purchaseorder where Timestamp > @in_Timestamp order by Timestamp desc
+end
